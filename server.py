@@ -63,7 +63,7 @@ def purchasePlaces():
         flash("Error: You cannot book more than 12 places per competition.")
         return render_template('welcome.html', club=club, competitions=competitions), 400
 
-    # Correction BUG 5  : Vérification des points du club
+    # Correction BUG 5 :Vérifier si le club a suffisamment de points
     if placesRequired > club_points:
         flash("Your club doesn't have enough points.")
         return render_template('welcome.html', club=club, competitions=competitions), 400
