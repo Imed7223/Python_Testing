@@ -26,7 +26,7 @@ def index():
 
 @app.route('/showSummary',methods=['POST'])
 def showSummary():
-    # Correction bug1 "email"
+    # Correction BUG 1 "email"
     email = request.form.get('email')
     club = next((club for club in clubs if club['email'] == email), None)
     
@@ -50,15 +50,29 @@ def book(competition,club):
 
 @app.route('/purchasePlaces',methods=['POST'])
 def purchasePlaces():
+    # Trouver la compétition et le club
     competition = [c for c in competitions if c['name'] == request.form['competition']][0]
     club = [c for c in clubs if c['name'] == request.form['club']][0]
     placesRequired = int(request.form['places'])
     competition['numberOfPlaces'] = int(competition['numberOfPlaces'])-placesRequired
+
+    # Validation des points disponibles
+    if placesRequired > int(club['points']):
+        flash("Your club doesn't have enough points")
+        return render_template('welcome.html', club=club, competitions=competitions), 400
+
+    competition_places = int(competition['numberOfPlaces'])
+    club_points = int(club['points'])
+
+    # Correction BUG 3: Mise à jour des points du club
+    competition['numberOfPlaces'] = competition_places - placesRequired
+    club['points'] = club_points - placesRequired
+
     flash('Great-booking complete!')
     return render_template('welcome.html', club=club, competitions=competitions)
 
 
-# FONCTIONNALITÉ 2: Tableau d'affichage des points
+# FONCTIONNALITÉ BUG 2: Tableau d'affichage des points
 @app.route('/pointsDisplay')
 def pointsDisplay():
     return render_template('points_display.html', clubs=clubs)
