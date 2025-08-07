@@ -58,16 +58,12 @@ def purchasePlaces():
     competition_places = int(competition['numberOfPlaces'])
     club_points = int(club['points'])
 
-    # Correction BUG 5: Limite de 12 places par club 
+    # Correction BUG 4: Limite de 12 places par club 
     if placesRequired > 12:
         flash("Error: You cannot book more than 12 places per competition.")
         return render_template('welcome.html', club=club, competitions=competitions), 400
 
-    # Validation des points disponibles
-    if placesRequired > int(club['points']):
-        flash("Your club doesn't have enough points")
-        return render_template('welcome.html', club=club, competitions=competitions), 400
-
+    # Correction BUG 5  : Vérification des points du club
     if placesRequired > club_points:
         flash("Your club doesn't have enough points.")
         return render_template('welcome.html', club=club, competitions=competitions), 400
@@ -80,7 +76,7 @@ def purchasePlaces():
     return render_template('welcome.html', club=club, competitions=competitions)
 
 
-# FONCTIONNALITÉ BUG 2: Tableau d'affichage des points
+# Correction BUG 2: Tableau d'affichage des points
 @app.route('/pointsDisplay')
 def pointsDisplay():
     return render_template('points_display.html', clubs=clubs)
