@@ -44,7 +44,7 @@ def book(competition, club):
         foundClub = [c for c in clubs if c['name'] == club][0]
         foundCompetition = [c for c in competitions if c['name'] == competition][0]
         
-        # Vérification de la date de la compétition
+        # Correction BUG 7: Vérification de la date de la compétition
         comp_date = datetime.strptime(foundCompetition['date'], "%Y-%m-%d %H:%M:%S")
         if comp_date < datetime.now():
             flash("Cannot book places for past competitions.")
@@ -91,7 +91,7 @@ def purchasePlaces():
         # Vérification capacité de la compétition
         if placesRequired > competition_places:
             flash(f"Error: Only {competition_places} places available.")
-            return render_template('welcome.html', club=club, competitions=competitions, clubs=clubs), 200
+            return render_template('welcome.html', club=club, competitions=competitions, clubs=clubs), 400
 
         # Correction BUG 4: Limite de 12 places par club 
         if placesRequired > 12:
@@ -101,17 +101,17 @@ def purchasePlaces():
         # Correction BUG 5 :Vérifier si le club a suffisamment de points
         if placesRequired > club_points:
             flash("Error: Your club doesn't have enough points.")
-            return render_template('welcome.html', club=club, competitions=competitions, clubs=clubs), 200
+            return render_template('welcome.html', club=club, competitions=competitions, clubs=clubs), 400
 
-        # Réservation réussie
+        # Correction BUG 3: Mise à jour des points du club
         competition['numberOfPlaces'] = str(competition_places - placesRequired)
         club['points'] = str(club_points - placesRequired)
         flash("Great-booking complete!")
-        return render_template('welcome.html', club=club, competitions=competitions, clubs=clubs)
+        return render_template('welcome.html', club=club, competitions=competitions, clubs=clubs), 200
 
     except IndexError:
         flash("Error: Club or competition not found.")
-        return render_template('welcome.html', clubs=clubs, competitions=competitions), 200
+        return render_template('welcome.html', clubs=clubs, competitions=competitions), 400
 
 # Correction BUG 2: Tableau d'affichage des points
 @app.route('/pointsDisplay')

@@ -11,6 +11,13 @@ def client():
     with app.test_client() as client:
         yield client
 
+@pytest.fixture(autouse=True)
+def reset_data():
+    # Recharge les données JSON pour chaque test
+    clubs[:] = json.load(open('clubs.json'))['clubs']
+    competitions[:] = json.load(open('competitions.json'))['competitions']       
+
+
 def test_points_deduction(client):
     """Test que les points sont bien déduits après réservation"""
     # Données de test
@@ -36,7 +43,8 @@ def test_points_deduction(client):
     updated_points = int(next(c['points'] for c in clubs if c['name'] == club_name))
     assert updated_points == initial_points - places_required
 
-def test_insufficient_points(client):
+
+def test_points_update_insufficient_points(client):
     """Test que les points ne sont pas déduits si réservation impossible"""
     # Données de test
     club_name = "Iron Temple"  # 4 points initialement

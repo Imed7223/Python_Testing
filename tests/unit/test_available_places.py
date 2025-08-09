@@ -47,7 +47,7 @@ def test_exceed_available_places(client):
         'club': "Test Club",
         'places': '26'
     })
-    assert response.status_code == 200
+    assert response.status_code == 400
     assert b"Error: Only" in response.data
 
 def test_zero_places(client):
