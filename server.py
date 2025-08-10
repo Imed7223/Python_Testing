@@ -50,31 +50,36 @@ def book(competition,club):
 
 @app.route('/purchasePlaces',methods=['POST'])
 def purchasePlaces():
-    # Trouver la compétition et le club
-    competition = [c for c in competitions if c['name'] == request.form['competition']][0]
-    club = [c for c in clubs if c['name'] == request.form['club']][0]
-    placesRequired = int(request.form['places'])
 
-    competition_places = int(competition['numberOfPlaces'])
-    club_points = int(club['points'])
 
-    # Correction BUG 4: Limite de 12 places par club 
-    if placesRequired > 12:
-        flash("Error: You cannot book more than 12 places per competition.")
-        return render_template('welcome.html', club=club, competitions=competitions), 400
+    try:
+        # Récupération données
+        competition = [c for c in competitions if c['name'] == request.form['competition']][0]
+        club = [c for c in clubs if c['name'] == request.form['club']][0]
+        placesRequired = int(request.form['places'])
 
-    # Correction BUG 5  : Vérification des points du club
-    if placesRequired > club_points:
-        flash("Your club doesn't have enough points.")
-        return render_template('welcome.html', club=club, competitions=competitions), 400
-    
-    # Correction BUG 3: Mise à jour des points du club
-    competition['numberOfPlaces'] = competition_places - placesRequired
-    club['points'] = club_points - placesRequired
+        competition_places = int(competition['numberOfPlaces'])
+        club_points = int(club['points'])
 
-    flash('Great-booking complete!')
-    return render_template('welcome.html', club=club, competitions=competitions)
+        # Correction BUG 4: Limite de 12 places par club 
+        if placesRequired > 12:
+            flash("Error: You cannot book more than 12 places per competition.")
+            return render_template('welcome.html', club=club, competitions=competitions), 400
 
+        # Correction BUG 5  : Vérification des points du club
+        if placesRequired > club_points:
+            flash("Your club doesn't have enough points.")
+            return render_template('welcome.html', club=club, competitions=competitions), 400
+        
+        # Correction BUG 3: Mise à jour des points du club
+        competition['numberOfPlaces'] = competition_places - placesRequired
+        club['points'] = club_points - placesRequired
+
+        flash('Great-booking complete!')
+        return render_template('welcome.html', club=club, competitions=competitions)
+    except Exception as e:
+        flash(str(e))
+        return redirect(url_for('index')), 400
 
 # Correction BUG 2: Tableau d'affichage des points
 @app.route('/pointsDisplay')
