@@ -11,19 +11,18 @@ def client():
     with app.test_client() as client:
         yield client
 
+
 def test_insufficient_points(client):
-    """Test que les points ne sont pas déduits si réservation impossible"""
-    # Données de test
-    club_name = "Iron Temple"  # 4 points initialement
-    competition_name = "Spring Festival"
-    places_required = 5  # Plus que les points disponibles
-    
-    # Points initiaux
+    """Test simplifié pour points insuffisants"""
+    club_name = "Iron Temple"  # 4 points
     initial_points = int(next(c['points'] for c in clubs if c['name'] == club_name))
     
-    # Faire la requête de réservation
     response = client.post('/purchasePlaces', data={
-        'competition': competition_name,
+        'competition': 'Spring Festival',
         'club': club_name,
-        'places': str(places_required)
-    })
+        'places': '5'  # Plus que les 4 points disponibles
+    }, follow_redirects=True)
+    
+    # Vérifications essentielles seulement
+    assert b"points" in response.data or b"Error" in response.data
+    assert int(next(c['points'] for c in clubs if c['name'] == club_name)) == initial_points
