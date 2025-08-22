@@ -6,6 +6,11 @@
 </head>
 <body>
     <h1>Welcome to the GUDLFT Registration Portal!</h1>
+    <!-- lien vers le tableau des points -->
+    <p>
+        <a href="{{ url_for('pointsDisplay') }}">View Clubs Points</a> 
+        
+    </p>
     Please enter your secretary email to continue:
     
     {% with messages = get_flashed_messages() %}
