@@ -4,7 +4,8 @@ lib
 .Python
 tests/
 .envrc
+___Pycache___
 __pycache__
 htmlcov/
 .coverage
-
+.pytest_cache/
